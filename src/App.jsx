@@ -22,7 +22,7 @@ function App() {
         })
         .catch((err)=>{
           console.error("Error fetching user data",err);
-          dispatch(logout());
+          // dispatch(logout());
         })
         .finally(()=>{
           setLoading(false);
