@@ -7,6 +7,9 @@ import Logo from "./Logo";
 import LogoutBtn from "./header/LogoutBtn";
 import Select from "./Select";
 import PostCard from "./PostCard";
+import Login from "./login/Login";
+import Signup from "./signup/signup";
+import ProtectedRoute from "./AuthLayout";
 
 export {
     Header,
@@ -16,4 +19,9 @@ export {
     Button,
     Logo,
     LogoutBtn,
+    Select,
+    PostCard,
+    Login,
+    Signup,
+    ProtectedRoute,
 }
