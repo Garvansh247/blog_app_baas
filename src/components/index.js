@@ -10,6 +10,8 @@ import PostCard from "./PostCard";
 import Login from "./login/Login";
 import Signup from "./signup/signup";
 import ProtectedRoute from "./AuthLayout";
+import RTE from "./RTE";
+import PostForm from "./postform/PostForm";
 
 export {
     Header,
@@ -24,4 +26,6 @@ export {
     Login,
     Signup,
     ProtectedRoute,
+    RTE,
+    PostForm,
 }
