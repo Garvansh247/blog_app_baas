@@ -4,10 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect,useCallback } from "react";
 import appwriteService from "../../appwrite/config";
+import { useDispatch } from "react-redux";
+import { addToAllPosts,addToMyPosts,addToActivePosts,updatePostInActivePosts,updatePostInAllPosts,updatePostInMyPosts,deletePostFromActivePosts,deletePostFromAllPosts,deletePostFromMyPosts } from "../../features/postSlice";
+import { toPlain } from "../../utils/serialize";
+
+
 
 
 
 function PostForm({post}) {
+    const dispatch=useDispatch();
     const navigate=useNavigate();
     const {userData}=useSelector((state)=>state.auth);
     const {register,handleSubmit,control,getValues,setValue,watch}=useForm({
@@ -21,6 +27,9 @@ function PostForm({post}) {
     })
     const onSubmit =async (data)=>{
         if(post){
+            if(userData?.$id !== post.userId){
+                return;
+            }
             const newlyUploaded=data.imageData && data.imageData[0]? await appwriteService.createFile(data.imageData[0]) : null;
             if(newlyUploaded){
                 await appwriteService.deleteFile(post.featuredImage);
@@ -28,6 +37,13 @@ function PostForm({post}) {
             }
             const res=await appwriteService.updatePost(post.$id,data); // we need to give old slug to update the post because in appwrite we are using slug as rowId and if slug is changed then it will create new post instead of updating the existing post
             if(res){
+                dispatch(updatePostInAllPosts(toPlain(res)));
+                if(userData.$id===res.userId){
+                    dispatch(updatePostInMyPosts(toPlain(res)));
+                }
+                if(res.status==="active"){
+                    dispatch(updatePostInActivePosts(toPlain(res)));
+                }
                 navigate(`/post/${res.$id}`);
             }
         } else{
@@ -37,6 +53,13 @@ function PostForm({post}) {
             }
             const res=await appwriteService.createPost(data.slug,{...data,userId: userData.$id});
             if(res){
+                dispatch(addToAllPosts(toPlain(res)));
+                if(userData.$id===res.userId){
+                    dispatch(addToMyPosts(toPlain(res)));
+                }
+                if(res.status==="active"){
+                    dispatch(addToActivePosts(toPlain(res)));
+                }
                 navigate(`/post/${res.$id}`);
             }
         }
