@@ -17,6 +17,11 @@ function Header(){
             isActive:authStatus, // only show if user is logged in
         },
         {
+            name:"My Posts",
+            path:"/my-posts",
+            isActive:authStatus, // only show if user is logged in
+        },
+        {
             name:"Create Post",
             path:"/create-post",
             isActive:authStatus, // only show if user is logged in
@@ -35,11 +40,11 @@ function Header(){
     return (
         <header className="bg-gray-800 text-white p-4">
             <Container>
-                    <nav className="container mx-auto flex justify-between items-center">
+                    <nav className="flex justify-between items-center">
                     <div className="flex items-center">
                         <Link to="/"><Logo width="120px" /></Link>
                     </div>
-                    <ul>
+                    <ul className="flex items-center gap-2">
                         {
                             navItems.map(
                                 (item)=> (item.isActive?(
