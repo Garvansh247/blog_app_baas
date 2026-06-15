@@ -5,6 +5,7 @@ import { useState } from "react";
 import authService from "../../appwrite/auth";
 import {login} from "../../features/authSlice"
 import { useDispatch } from "react-redux";
+import { toPlain } from "../../utils/serialize";
 
 function Signup(){
     const {register,handleSubmit,formState:{errors : rhfErrors}}=useForm();
@@ -19,7 +20,7 @@ function Signup(){
             if(user){
                 const userData=await authService.getCurrentUser();
                 if(userData){
-                    dispatch(login({userData}));
+                    dispatch(login({userData: toPlain(userData)}));
                     navigate("/");
                 }
             }
@@ -60,7 +61,7 @@ function Signup(){
                         label="Password"
                         type="password"
                         placeholder="Enter your password"
-                        {...register("password", {required:"Password is required", minLength:{value:6,message:"Password must be at least 6 characters"}})}
+                        {...register("password", {required:"Password is required", minLength:{value:8,message:"Password must be at least 8 characters"}})}
                     />
                     {rhfErrors.password && <p className="text-red-500 text-sm">{rhfErrors.password.message}</p>}
                     {serverError && <p className="text-red-500 text-sm">{serverError}</p>}

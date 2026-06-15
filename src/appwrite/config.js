@@ -86,6 +86,30 @@ class Service{
         }
         return null;
     }
+    async getUserPosts(userId){
+        try{
+            return await this.getPosts([Query.equal('userId',userId)]);
+        } catch(err){
+            console.log(err);
+        }
+        return null;
+    }
+    async getActivePosts(){
+        try{
+            return await this.getPosts([Query.equal('status','active')]);
+        } catch(err){
+            console.log(err);
+        }
+        return null;
+    }
+    async getAllPosts(){
+        try{
+            return await this.getPosts([]);
+        } catch(err){
+            console.log(err);
+        }
+        return null;
+    }
 
     // for files service
 
@@ -103,13 +127,15 @@ class Service{
     }
     getFilePreview(fileId){
         try{
-            return this.storage.getFilePreview({
-                            bucketId: conf.appwriteBucketId,
-                            fileId: fileId,
-                        });
+            const preview = this.storage.getFileView({
+                bucketId: conf.appwriteBucketId,
+                fileId: fileId
+            });
+
+            return preview?.href ?? String(preview);
         } catch(err){
             console.log(err);
-        }   
+        }
         return null;
     }
     async deleteFile(fileId){

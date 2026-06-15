@@ -5,6 +5,7 @@ import { useState } from "react";
 import authService from "../../appwrite/auth";
 import {login} from "../../features/authSlice"
 import { useDispatch } from "react-redux";
+import { toPlain } from "../../utils/serialize";
 
 function Login(){
     const {register,handleSubmit,formState:{errors : rhfErrors}}=useForm();
@@ -20,7 +21,7 @@ function Login(){
                 if(session){
                     const userData=await authService.getCurrentUser();
                     if(userData){
-                        dispatch(login({userData}));
+                        dispatch(login({userData: toPlain(userData)}));
                         navigate("/");
                     }
                 }

@@ -33,3 +33,5 @@ function RTE({
         </div>
     )
 }
+
+export default RTE;
