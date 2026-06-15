@@ -3,6 +3,9 @@ import './index.css'
 import authService from './appwrite/auth.js';
 import { useDispatch } from 'react-redux';
 import { login,logout } from './features/authSlice.js';
+import { Header,Footer } from './components/index.js';
+import { Outlet } from 'react-router-dom';
+import { toPlain } from './utils/serialize.js';
 
 function App() {
   const [loading,setLoading]=useState(true);
@@ -14,7 +17,7 @@ function App() {
         .then((user)=>{
           if(user){
             console.log("User is logged in",user);
-            dispatch(login({userData: user}));
+            dispatch(login({userData: toPlain(user)}));
           } else {
             console.log("No user logged in");
             dispatch(logout());
@@ -31,7 +34,9 @@ function App() {
   )
   return !loading? (
     <>
-      
+      <Header/>
+      <Outlet/>
+      <Footer/>
     </>
   )
    :
