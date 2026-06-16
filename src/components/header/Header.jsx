@@ -42,7 +42,7 @@ function Header(){
             <Container>
                     <nav className="flex justify-between items-center">
                     <div className="flex items-center">
-                        <Link to="/"><Logo width="120px" /></Link>
+                        <Link to="/"><Logo width="60px" /></Link>
                     </div>
                     <ul className="flex items-center gap-2">
                         {

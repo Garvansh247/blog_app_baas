@@ -31,22 +31,17 @@ class Service{
         }
         return null;
     }
-    async updatePost(slug,{title,content,featuredImage,status}){
+    async updatePost(slug,data){
         try{
             return await this.tablesDB.updateRow({
                 databaseId: conf.appwriteDatabaseId,
                 tableId: conf.appwriteCollectionId,
                 rowId: slug,
-                data: {
-                    title,
-                    content,
-                    featuredImage,
-                    status
-                }
+                data: data
             });
         } catch(err){
-            console.log(err);
-        }
+            console.log(err);    
+        } 
         return null;
     }   
     async deletePost(slug){

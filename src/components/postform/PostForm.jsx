@@ -13,24 +13,28 @@ import { toPlain } from "../../utils/serialize";
 
 
 function PostForm({post}) {
+    console.log("updating post",post);
     const dispatch=useDispatch();
     const navigate=useNavigate();
     const {userData}=useSelector((state)=>state.auth);
-    const {register,handleSubmit,control,getValues,setValue,watch}=useForm({
+    const {register,handleSubmit,control,setValue,watch,formState :{errors}}=useForm({
         defaultValues:{
             title: post?.title || "",
             slug: post?.slug || "",
             content: post?.content || "",
-            featuredImage: post?.featuredImage || "",
             status: post?.status || "active",
         }
     })
     const onSubmit =async (data)=>{
+        const fileInput=data.imageData?data.imageData[0]:null;
+        delete data.imageData; // remove imageData from data object to avoid sending it to appwrite
         if(post){
+            data.$id=post.$id;
+            console.log("updating post",data);
             if(userData?.$id !== post.userId){
                 return;
             }
-            const newlyUploaded=data.imageData && data.imageData[0]? await appwriteService.createFile(data.imageData[0]) : null;
+            const newlyUploaded=fileInput? await appwriteService.createFile(fileInput) : null;
             if(newlyUploaded){
                 await appwriteService.deleteFile(post.featuredImage);
                 data.featuredImage=newlyUploaded.$id;
@@ -44,10 +48,10 @@ function PostForm({post}) {
                 if(res.status==="active"){
                     dispatch(updatePostInActivePosts(toPlain(res)));
                 }
-                navigate(`/post/${res.$id}`);
+                navigate(`/post/${res.slug || res.$id}`);
             }
         } else{
-            const newlyUploaded=await appwriteService.createFile(data.imageData[0]);
+            const newlyUploaded=await appwriteService.createFile(fileInput);
             if(newlyUploaded){
                 data.featuredImage=newlyUploaded.$id;
             }
@@ -60,7 +64,7 @@ function PostForm({post}) {
                 if(res.status==="active"){
                     dispatch(addToActivePosts(toPlain(res)));
                 }
-                navigate(`/post/${res.$id}`);
+                navigate(`/post/${res.slug || res.$id}`);
             }
         }
     }
@@ -90,12 +94,14 @@ function PostForm({post}) {
                     placeholder="Enter title"
                     {...register("title",{required:"Title is required"})}
                 />
+                {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
                 <Input
                     label="Slug"
                     placeholder="Enter slug"
                     {...register("slug",{required:"Slug is required"})}
-                    onInput={(e)=>setValue("slug",slugTransform(e.target.value),{shouldValidate:true})}
+                    onInput={(e)=>setValue("slug",slugTransform(e.currentTarget.value),{shouldValidate:true})}
                 />
+                {errors.slug && <p className="text-red-500 text-sm">{errors.slug.message}</p>}
                 <RTE
                     label="Content"
                     control={control}
@@ -111,6 +117,7 @@ function PostForm({post}) {
                     accept="image/*"
                     {...register("imageData",{required: post ? false : "Featured image is required"})}
                 />
+                {errors.imageData && <p className="text-red-500 text-sm">{errors.imageData.message}</p>}
                 <Select
                     label="Status"
                     options={[
@@ -119,9 +126,11 @@ function PostForm({post}) {
                     ]}
                     {...register("status",{required:"Status is required"})}
                 />
+                {errors.status && <p className="text-red-500 text-sm">{errors.status.message}</p>}
                 <Button type="submit" className={`mt-4 ${post ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"}`}>
                     {post ? "Update Post" : "Create Post"}
                 </Button>
+                
                     
 
             </div>
